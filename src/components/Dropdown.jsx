@@ -34,7 +34,7 @@ export const Dropdown = ( {countries, selected, setSelected} ) => {
             />
             <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
-                className="h-5 w-5 text-gray-400 hover:text-gray-800"
+                className="h-5 w-5 text-gray-800 hover:text-gray-400"
                 aria-hidden="true"
               />
             </Combobox.Button>
@@ -57,7 +57,7 @@ export const Dropdown = ( {countries, selected, setSelected} ) => {
                     key={i}
                     className={({ active }) =>
                       `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                        active ? 'bg-yellow-500 text-white' : 'text-gray-900'
                       }`
                     }
                     value={person}

@@ -1,42 +1,55 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import Icons from './Icons';
 
-export const MovieList = ( {searchedMovie, country} ) => {
-  const filteredMovies = searchedMovie.filter(x => x.poster_path !== null && new Date(x.release_date) < Date.now());
-  const [streamingList, setStreamingList] = useState([])
+export const MovieList = ({ searchedMovie, country }) => {
+  const filteredMovies = searchedMovie.filter(
+    (x) => x.poster_path !== null && new Date(x.release_date) < Date.now()
+  );
+  const [streamingLists, setStreamingLists] = useState({});
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (movieId) => {
       try {
-        if (filteredMovies.length > 0) {
-          const response = await fetch(`https://api.themoviedb.org/3/movie/${filteredMovies[0].id}/watch/providers?api_key=22c9ae54426da7a9d7ae12862c6ef56f`);
-          const result = await response.json();
-          setStreamingList(result.results[country['iso_3166_1']]['flatrate']);
-          console.log(`The result is`, result);
-          console.log(streamingList);
-        }
-      }
-      catch (err) {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/movie/${movieId}/watch/providers?api_key=22c9ae54426da7a9d7ae12862c6ef56f`
+        );
+        const result = await response.json();
+        
+        // Check if result contains the expected data structure
+        if (result.results && result.results[country['iso_3166_1']] && result.results[country['iso_3166_1']]['flatrate']) {
+          setStreamingLists((prevLists) => ({
+            ...prevLists,
+            [movieId]: result.results[country['iso_3166_1']]['flatrate'],
+          }));
+        } 
+      } catch (err) {
         console.log(`Error fetching`, err);
       }
     };
-    fetchData();
+
+    filteredMovies.forEach((movie) => {
+      fetchData(movie.id);
+    });
+  // eslint-disable-next-line
   }, [searchedMovie]);
-  
 
   return (
     <section className='max-w-[70%] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10'>
-        {filteredMovies.map((x, i) => (
-            <div key={i}>
-                <h2>{x.title || x.name}</h2>
-                <img src={`http://image.tmdb.org/t/p/w500${x.poster_path}`} alt="" />
-                <span key={i}>Available in</span>
-                <ul>
-                  {streamingList.map((x,i) => (
-                    <li id={i}>{x.provider_name}</li>
-                  ))}
-                </ul>
-            </div>
-        ))}
+      {filteredMovies.map((movie, i) => (
+        <div className='card' key={i}>
+          <img className='mb-5' src={`http://image.tmdb.org/t/p/w500${movie.poster_path}`} alt='Movie posters' />
+          <h2 className='font-bold mb-3'>{movie.title || movie.name}</h2>
+          {streamingLists[movie.id] ? <span className='mb-2 block'>You can watch this content on:</span> : null}
+          <ul className='flex gap-4 justify-center flex-wrap'>
+            {streamingLists[movie.id]
+              ? streamingLists[movie.id].map((streamingItem, j) => (
+                  <li key={j}>{<img alt='streaming company' src={Icons(streamingItem.provider_name)}></img>}</li>
+                ))
+              : <span>This movie is not available in your country</span>}
+          </ul>
+
+        </div>
+      ))}
     </section>
-  )
-}
+  );
+};

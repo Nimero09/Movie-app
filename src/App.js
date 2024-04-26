@@ -5,6 +5,7 @@ import { Dropdown } from './components/Dropdown';
 import { Input } from './components/Input' 
 import { Button } from './components/Button';
 import { MovieList } from './components/MovieList';
+import { Hero } from './components/Hero';
 
 function App() {
   // Countries list hook
@@ -16,7 +17,6 @@ function App() {
         const response = await fetch('https://api.themoviedb.org/3/configuration/countries?api_key=22c9ae54426da7a9d7ae12862c6ef56f&language=en-US');
         const result = await response.json();
         setCountries(result);
-        console.log(countries)
       }
       catch (err) {
         console.log('Errors fetching', err);
@@ -26,50 +26,17 @@ function App() {
     // eslint-disable-next-line
   }, [])
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const options = {
-  //       method: 'GET',
-  //       headers: {
-  //         'X-RapidAPI-Key': '9094dbf29dmshd6ac12fe38516aap1fb092jsnd9c12cb295b4',
-  //         'X-RapidAPI-Host': 'streaming-availability.p.rapidapi.com'
-  //       }
-  //     };
-  //     try {
-  //       const response = await fetch(`https://streaming-availability.p.rapidapi.com/countries`, options);
-  //       const result = await response.json();
-  //       const countriesArray = Object.keys(result.result).map(key => ({
-  //         key,
-  //         ...result.result[key]
-  //       }))
-  //       setCountries(countriesArray);
-  //     }
-  //     catch (err) {
-  //       console.log(`Error fetching`, err);
-  //     }
-  //   }
-  // fetchData();
-  // }, [])
-
   // Movie selection hook
   const [movie, setMovie] = useState('');
   const selectMovie = (movie) => {
     setMovie(movie);
   }
-
-  useEffect(() => {
-    console.log(movie);
-  }, [movie])
-
+  
   // Country selection hook
   const [selected, setSelected] = useState('');
   const selectCountry = (country) => {
     setSelected(country);
   }
-
-  useEffect(() => {
-    console.log(selected)
-  }, [selected])
 
   // Searches movie Hook
   const [searchedMovie, setSearchedMovie] = useState([])
@@ -77,25 +44,49 @@ function App() {
     setSearchedMovie(movie);
   }
 
-  useEffect(() => {
-    console.log(searchedMovie)
-  }, [searchedMovie])
-  
+  // Error handling hooks
+  const [inputError, setInputError] = useState(false);
+  const [noMoviesError, setNoMoviesError] = useState(false);
+
+  const getInputError = (bool) => {
+    setInputError(bool);
+  }
+
+  const getNoMoviesError = (bool) => {
+    setNoMoviesError(bool)
+  }
+
   return (
-    <section className='max-w-[90%] text-center mx-auto'>
+    <section className='max-w-[90%] text-center mx-auto pb-10'>
         <Navbar />
-        <section className='grid place-items-center grid-cols-3 mb-10'>
-          <Dropdown 
-            countries={countries}
-            selected={selected}
-            setSelected={selectCountry}
-          />
-          <Input selectMovie={selectMovie} />
-          <Button 
-            movie={movie}
-            getSearchedMovie={getSearchedMovie}
-          />
-        </section>
+        <main className='md:h-[500px] flex gap-5 justify-center items-center flex-col'>
+          <Hero />
+          <section className='flex flex-col md:flex-row md:justify-center md:items-center gap-5 mb-20 md:mb-10'>
+            <div>
+              <span className='text-sm mb-3 block'>Select your country</span>
+              <Dropdown 
+                countries={countries}
+                selected={selected}
+                setSelected={selectCountry}
+              />
+            </div>
+            <div>
+              <span className='text-sm mb-3 block'>Type the movie you're looking for</span>
+              <Input 
+                selectMovie={selectMovie} 
+                noMoviesError={noMoviesError}
+              />
+              {noMoviesError ? <div className='text-left mt-2 text-red-400 mb-[-30px]'>Movie was not found</div> : null}
+              {inputError ? <div className='text-left mt-2 text-red-400 mb-[-30px]'>Input can not be blank</div> : null}
+            </div>
+            <Button 
+              movie={movie}
+              getSearchedMovie={getSearchedMovie}
+              inputError={getInputError}
+              moviesError={getNoMoviesError}
+            />
+          </section>
+        </main>
         <MovieList 
           searchedMovie={searchedMovie} 
           country={selected}

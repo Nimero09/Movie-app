@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .card {
+        padding: 20px;
+        background: #10171D;
+        border-radius: 10px;
+    }
+}
