@@ -62,6 +62,10 @@ const Icons = (streaming) => {
       case 'Amazon Prime Video':
         streaming = 'icons/amazon.png'
         break;
+      case 'Paramount Plus':
+      case 'Paramount Plus Apple TV Channel ':
+        streaming = 'icons/paramount.png'
+        break;
       case 'Apple TV Plus':
         streaming = 'icons/apple.png'
         break;
