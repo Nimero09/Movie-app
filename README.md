@@ -13,7 +13,7 @@ With StreamFinder, you can effortlessly explore a vast array of movies and disco
 
 - **React**: Frontend framework for building interactive user interfaces.
 - **Tailwind CSS**: Utility-first CSS framework for rapid UI development, enabling easy customization and scalability.
-- **OpenWeather API**: Access real-time weather data and forecasts for any location worldwide, ensuring accurate and up-to-date information.
+- **The Movie Database (TMDB) API**: Access comprehensive movie information, including details, reviews, and streaming availability.
 
 ## Setup Instructions
 ```
